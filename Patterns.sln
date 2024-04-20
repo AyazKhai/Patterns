@@ -17,13 +17,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ДекораторLab", "Д
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Proxy", "Proxy\Proxy.csproj", "{48C3BD4B-3A32-4391-A729-032875518B31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacadeLab", "Facade\FacadeLab.csproj", "{EDCA014A-37D1-4EC3-B52F-BD92651449DB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FacadeLab", "Facade\FacadeLab.csproj", "{EDCA014A-37D1-4EC3-B52F-BD92651449DB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterpreterLab", "Interpreter\InterpreterLab.csproj", "{D5D1D0DD-19A9-45EF-85DA-2E8D68A166AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InterpreterLab", "Interpreter\InterpreterLab.csproj", "{D5D1D0DD-19A9-45EF-85DA-2E8D68A166AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObserverLab", "Observer\ObserverLab.csproj", "{AB771647-213C-4CB6-8EF4-AE2EB5BF23D5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ObserverLab", "Observer\ObserverLab.csproj", "{AB771647-213C-4CB6-8EF4-AE2EB5BF23D5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StateLab", "State\StateLab.csproj", "{14BC2B11-EEBB-48E5-B591-22D1B1D30876}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StateLab", "State\StateLab.csproj", "{14BC2B11-EEBB-48E5-B591-22D1B1D30876}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Delete", "Delete\Delete.csproj", "{74A56729-5FD1-4D9B-AD6C-ABDB30ED7797}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{14BC2B11-EEBB-48E5-B591-22D1B1D30876}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14BC2B11-EEBB-48E5-B591-22D1B1D30876}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14BC2B11-EEBB-48E5-B591-22D1B1D30876}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74A56729-5FD1-4D9B-AD6C-ABDB30ED7797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74A56729-5FD1-4D9B-AD6C-ABDB30ED7797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74A56729-5FD1-4D9B-AD6C-ABDB30ED7797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74A56729-5FD1-4D9B-AD6C-ABDB30ED7797}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

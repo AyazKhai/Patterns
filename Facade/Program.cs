@@ -1,46 +1,70 @@
-﻿/*Предположим, у нас есть веб-приложение, которое взаимодействует с базой данных для получения информации о пользователях и их заказах, а также отправляет электронные письма для подтверждения заказов. Внутренняя структура системы может быть сложной, с различными классами и методами для работы с базой данных и отправки электронных писем.
+﻿using System;
 
-В этом случае мы можем использовать паттерн фасад для создания простого интерфейса, который скрывает сложность работы с базой данных и отправкой писем.*/
-
-using System;
-
-// Подсистема работы с базой данных
-class DatabaseSubsystem
+// Подсистема управления информацией о сотрудниках
+class EmployeeInfoSubsystem
 {
-    public void GetUserOrders(int userId)
+    public void GetEmployeeDetails(int employeeId)
     {
-        Console.WriteLine($"Getting orders for user with ID {userId} from the database.");
+        Console.WriteLine($"Получение информации о сотруднике с ID {employeeId}.");
     }
 }
 
-// Подсистема отправки электронных писем
-class EmailSubsystem
+// Подсистема управления рабочим временем
+class TimeTrackingSubsystem
 {
-    public void SendConfirmationEmail(string emailAddress, string message)
+    public void TrackWorkHours(int employeeId, int hours)
     {
-        Console.WriteLine($"Sending confirmation email to {emailAddress}: {message}");
+        Console.WriteLine($"Отслеживание {hours} часов для сотрудника с ID {employeeId}.");
     }
 }
 
-// Фасад для взаимодействия с базой данных и отправкой электронных писем
-class OrderFacade
+// Подсистема управления отпусками
+class LeaveManagementSubsystem
 {
-    private DatabaseSubsystem database;
-    private EmailSubsystem email;
-
-    public OrderFacade()
+    public void ApplyForLeave(int employeeId, int days)
     {
-        database = new DatabaseSubsystem();
-        email = new EmailSubsystem();
+        Console.WriteLine($"Заявка на {days} дней отпуска для сотрудника с ID {employeeId}.");
+    }
+}
+
+// Подсистема управления зарплатой
+class PayrollSubsystem
+{
+    public void ProcessPayroll(int employeeId)
+    {
+        Console.WriteLine($"Начисление зарплаты для сотрудника с ID {employeeId}.");
+    }
+}
+
+// Фасад для взаимодействия с разными подсистемами отдела кадров
+class HumanResourcesFacade
+{
+    private readonly EmployeeInfoSubsystem _employeeInfo;
+    private readonly TimeTrackingSubsystem _timeTracking;
+    private readonly LeaveManagementSubsystem _leaveManagement;
+    private readonly PayrollSubsystem _payroll;
+
+    public HumanResourcesFacade()
+    {
+        _employeeInfo = new EmployeeInfoSubsystem();
+        _timeTracking = new TimeTrackingSubsystem();
+        _leaveManagement = new LeaveManagementSubsystem();
+        _payroll = new PayrollSubsystem();
     }
 
-    public void ProcessOrder(int userId, string emailAddress)
+    public void ManageEmployee(int employeeId, int hoursWorked, int leaveDays)
     {
-        // Получаем заказы пользователя из базы данных
-        database.GetUserOrders(userId);
+        // Получаем информацию о сотруднике
+        _employeeInfo.GetEmployeeDetails(employeeId);
 
-        // Отправляем подтверждение заказа по электронной почте
-        email.SendConfirmationEmail(emailAddress, "Your order has been processed successfully!");
+        // Отслеживаем рабочие часы
+        _timeTracking.TrackWorkHours(employeeId, hoursWorked);
+
+        // Обрабатываем заявку на отпуск
+        _leaveManagement.ApplyForLeave(employeeId, leaveDays);
+
+        // Обрабатываем зарплату
+        _payroll.ProcessPayroll(employeeId);
     }
 }
 
@@ -49,7 +73,9 @@ class Program
     static void Main(string[] args)
     {
         // Клиентский код взаимодействует с фасадом
-        OrderFacade orderFacade = new OrderFacade();
-        orderFacade.ProcessOrder(123, "example@example.com");
+        HumanResourcesFacade hrFacade = new HumanResourcesFacade();
+
+        // Управление сотрудником с ID 101
+        hrFacade.ManageEmployee(101, 40, 5);
     }
 }

@@ -1,72 +1,73 @@
-﻿// Компонент (Component)
-interface Beverage
+﻿using System;
+
+// Базовый интерфейс (Component)
+interface Employee
 {
-    string GetDescription();
-    double Cost();
+    string GetDetails();
+    double GetSalary();
 }
 
 // Конкретный компонент (ConcreteComponent)
-class Coffee : Beverage
+class BasicEmployee : Employee
 {
-    public string GetDescription()
+    public string GetDetails()
     {
-        return "Coffee";
+        return "Basic Employee";
     }
 
-    public double Cost()
+    public double GetSalary()
     {
-        return 2.0;
+        return 3000.0; // базовая зарплата
     }
 }
 
 // Декоратор (Decorator)
-abstract class CondimentDecorator : Beverage
+abstract class BonusDecorator : Employee
 {
-    protected Beverage beverage;
+    protected Employee employee;
 
-    public CondimentDecorator(Beverage beverage)
+    public BonusDecorator(Employee employee)
     {
-        this.beverage = beverage;
+        this.employee = employee;
     }
 
-    public abstract string GetDescription();
-
-    public abstract double Cost();
+    public abstract string GetDetails();
+    public abstract double GetSalary();
 }
 
-// Конкретный декоратор (ConcreteDecorator)
-class Milk : CondimentDecorator
+// Конкретный декоратор (ConcreteDecorator) — Медицинская страховка
+class HealthInsurance : BonusDecorator
 {
-    public Milk(Beverage beverage) : base(beverage)
+    public HealthInsurance(Employee employee) : base(employee)
     {
     }
 
-    public override string GetDescription()
+    public override string GetDetails()
     {
-        return beverage.GetDescription() + ", Milk";
+        return employee.GetDetails() + ", Health Insurance";
     }
 
-    public override double Cost()
+    public override double GetSalary()
     {
-        return beverage.Cost() + 0.5;
+        return employee.GetSalary() + 200.0; // дополнительная стоимость страховки
     }
 }
 
-// Конкретный декоратор (ConcreteDecorator)
-class Sugar : CondimentDecorator
+// Конкретный декоратор (ConcreteDecorator) — Премия
+class Bonus : BonusDecorator
 {
-    public Sugar(Beverage beverage) : base(beverage)
+    public Bonus(Employee employee) : base(employee)
     {
     }
 
-    public override string GetDescription()
+    public override string GetDetails()
     {
-        return beverage.GetDescription() + ", Sugar";
+        return employee.GetDetails() + ", Bonus";
     }
 
-    public override double Cost()
+    public override double GetSalary()
     {
-        return beverage.Cost() + 0.2;
+        return employee.GetSalary() + 500.0; // стоимость премии
     }
 }
 
@@ -75,17 +76,17 @@ class Client
 {
     static void Main(string[] args)
     {
-        // Создаем базовый напиток
-        Beverage coffee = new Coffee();
-        
-        // Добавляем молоко
-        coffee = new Milk(coffee);
+        // Создаем базового сотрудника
+        Employee employee = new BasicEmployee();
+        Console.WriteLine( employee.GetSalary());
+        // Добавляем медицинскую страховку
+        employee = new HealthInsurance(employee);
 
-        // Добавляем сахар
-        coffee = new Sugar(coffee);
+        // Добавляем премию
+        employee = new Bonus(employee);
 
-        // Получаем описание и стоимость напитка
-        Console.WriteLine($"Description: {coffee.GetDescription()}");
-        Console.WriteLine($"Cost: ${coffee.Cost()}");
+        // Получаем детали и зарплату
+        Console.WriteLine($"Employee Details: {employee.GetDetails()}");
+        Console.WriteLine($"Total Salary: ${employee.GetSalary()}");
     }
 }

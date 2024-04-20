@@ -1,84 +1,143 @@
-﻿/*Основная идея паттерна интерпретатор заключается в том, чтобы представить простой язык или грамматику в виде набора классов, каждый из которых представляет один элемент грамматики (называемый терминалом или нетерминалом). Затем составляется древовидная структура из этих классов для представления структуры предложений в языке. Каждый узел дерева может интерпретировать свою часть грамматики.*/
-using System;
+﻿using System;
+using System.Collections.Generic;
 
-// Интерфейс выражения
-interface IExpression
+// Интерфейс выражения для условий сотрудников
+interface IEmployeeExpression
 {
-    bool Interpret(string context);
+    bool Interpret(Employee employee);
 }
 
-// Терминальное выражение (проверка на палиндром)
-class PalindromeExpression : IExpression
+// Класс сотрудника
+class Employee
 {
-    public bool Interpret(string context)
-    {
-        // Удаляем пробелы из строки и приводим к нижнему регистру
-        string processedString = context.Replace(" ", "").ToLower();
+    public string Name { get; }
+    public string Position { get; }
+    public double Salary { get; }
+    public int YearsOfExperience { get; }
 
-        // Проверяем, является ли строка палиндромом
-        for (int i = 0; i < processedString.Length / 2; i++)
-        {
-            if (processedString[i] != processedString[processedString.Length - 1 - i])
-            {
-                return false;
-            }
-        }
-        return true;
+    public Employee(string name, string position, double salary, int yearsOfExperience)
+    {
+        Name = name;
+        Position = position;
+        Salary = salary;
+        YearsOfExperience = yearsOfExperience;
     }
 }
 
-// Терминальное выражение (проверка наличия подстроки)
-class SubstringExpression : IExpression
+// Терминальное выражение (проверка по должности)
+class PositionExpression : IEmployeeExpression
 {
-    private readonly string _substring;
+    private readonly string _requiredPosition;
 
-    public SubstringExpression(string substring)
+    public PositionExpression(string requiredPosition)
     {
-        _substring = substring;
+        _requiredPosition = requiredPosition;
     }
 
-    public bool Interpret(string context)
+    public bool Interpret(Employee employee)
     {
-        return context.Contains(_substring);
+        return employee.Position.Equals(_requiredPosition, StringComparison.OrdinalIgnoreCase);
     }
 }
 
-// Нетерминальное выражение (комбинация палиндрома и поиска подстроки)
-class AndExpression : IExpression
+// Терминальное выражение (проверка по стажу работы)
+class ExperienceExpression : IEmployeeExpression
 {
-    private readonly IExpression _expression1;
-    private readonly IExpression _expression2;
+    private readonly int _requiredYears;
 
-    public AndExpression(IExpression expression1, IExpression expression2)
+    public ExperienceExpression(int requiredYears)
+    {
+        _requiredYears = requiredYears;
+    }
+
+    public bool Interpret(Employee employee)
+    {
+        return employee.YearsOfExperience >= _requiredYears;
+    }
+}
+
+// Терминальное выражение (проверка по зарплате)
+class SalaryExpression : IEmployeeExpression
+{
+    private readonly double _requiredSalary;
+
+    public SalaryExpression(double requiredSalary)
+    {
+        _requiredSalary = requiredSalary;
+    }
+
+    public bool Interpret(Employee employee)
+    {
+        return employee.Salary >= _requiredSalary;
+    }
+}
+
+// Нетерминальное выражение (логическое И)
+class AndEmployeeExpression : IEmployeeExpression
+{
+    private readonly IEmployeeExpression _expression1;
+    private readonly IEmployeeExpression _expression2;
+
+    public AndEmployeeExpression(IEmployeeExpression expression1, IEmployeeExpression expression2)
     {
         _expression1 = expression1;
         _expression2 = expression2;
     }
 
-    public bool Interpret(string context)
+    public bool Interpret(Employee employee)
     {
-        return _expression1.Interpret(context) && _expression2.Interpret(context);
+        return _expression1.Interpret(employee) && _expression2.Interpret(employee);
     }
 }
 
+// Нетерминальное выражение (логическое ИЛИ)
+class OrEmployeeExpression : IEmployeeExpression
+{
+    private readonly IEmployeeExpression _expression1;
+    private readonly IEmployeeExpression _expression2;
+
+    public OrEmployeeExpression(IEmployeeExpression expression1, IEmployeeExpression expression2)
+    {
+        _expression1 = expression1;
+        _expression2 = expression2;
+    }
+
+    public bool Interpret(Employee employee)
+    {
+        return _expression1.Interpret(employee) || _expression2.Interpret(employee);
+    }
+}
+
+
+// Программа
 class Program
 {
     static void Main(string[] args)
     {
         // Создание терминальных выражений
-        IExpression palindromeExpression = new PalindromeExpression();
-        IExpression substringExpression = new SubstringExpression("hello");
+        IEmployeeExpression positionExpression = new PositionExpression("Manager");
+        IEmployeeExpression experienceExpression = new ExperienceExpression(5);
+        IEmployeeExpression salaryExpression = new SalaryExpression(5000);
 
-        // Создание нетерминального выражения (логическое И)
-        IExpression expression = new AndExpression(palindromeExpression, substringExpression);
+        // Создание нетерминального выражения (логическое И между стажем и зарплатой)
+        IEmployeeExpression seniorManagerExpression = new AndEmployeeExpression(experienceExpression, positionExpression);
 
-        // Проверка строки на палиндром и наличие подстроки
-        string input1 = "level";
-        string input2 = "hello";
-        string input3 = "level hello";
+        // Создание нетерминального выражения (логическое ИЛИ между стажем и зарплатой)
+        IEmployeeExpression seniorOrWellPaidExpression = new OrEmployeeExpression(experienceExpression, salaryExpression);
 
-        Console.WriteLine($"{input1} is a palindrome and contains 'hello': {expression.Interpret(input1)}"); // Выведет: False
-        Console.WriteLine($"{input2} is a palindrome and contains 'hello': {expression.Interpret(input2)}"); // Выведет: False
-        Console.WriteLine($"{input3} is a palindrome and contains 'hello': {expression.Interpret(input3)}"); // Выведет: False
+        // Создание нескольких сотрудников
+        var employee1 = new Employee("Alice", "Manager", 6000, 10);
+        var employee2 = new Employee("Bob", "Developer", 4500, 7);
+        var employee3 = new Employee("Charlie", "Manager", 4000, 3);
+
+        // Проверка, является ли сотрудник старшим менеджером
+        Console.WriteLine($"{employee1.Name} is a Senior Manager: {seniorManagerExpression.Interpret(employee1)}"); // Выведет: True
+        Console.WriteLine($"{employee2.Name} is a Senior Manager: {seniorManagerExpression.Interpret(employee2)}"); // Выведет: False
+        Console.WriteLine($"{employee3.Name} is a Senior Manager: {seniorManagerExpression.Interpret(employee3)}"); // Выведет: False
+
+        // Проверка, является ли сотрудник старшим или хорошо оплачиваемым
+        Console.WriteLine($"{employee1.Name} is a Senior or Well Paid: {seniorOrWellPaidExpression.Interpret(employee1)}"); // Выведет: True
+        Console.WriteLine($"{employee2.Name} is a Senior or Well Paid: {seniorOrWellPaidExpression.Interpret(employee2)}"); // Выведет: True
+        Console.WriteLine($"{employee3.Name} is a Senior or Well Paid: {seniorOrWellPaidExpression.Interpret(employee3)}"); // Выведет: False
     }
 }

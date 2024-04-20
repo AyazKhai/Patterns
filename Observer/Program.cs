@@ -2,67 +2,63 @@
 using System.Collections.Generic;
 
 // Интерфейс для наблюдателя
-interface IStockObserver
+interface IEmployeeObserver
 {
-    void Update(string stockName, double price);
+    void Update(string employeeName, string action, string details);
 }
 
-// Конкретный наблюдатель (инвестор)
-class Investor : IStockObserver
+// Конкретный наблюдатель (сотрудник)
+class EmployeeObserver : IEmployeeObserver
 {
     private readonly string _name;
 
-    public Investor(string name)
+    public EmployeeObserver(string name)
     {
         _name = name;
     }
 
-    public void Update(string stockName, double price)
+    public void Update(string employeeName, string action, string details)
     {
-        Console.WriteLine($"Уведомление для инвестора {_name}: Цена на акцию {stockName} изменилась и теперь составляет {price}");
+        Console.WriteLine($"Уведомление для {_name}: Сотрудник {employeeName} был {action}. {details}");
     }
 }
 
-// Класс, который представляет биржу и акцию
-class StockMarket
+// Класс, который представляет отдел кадров
+class HumanResourcesDepartment
 {
-    private readonly Dictionary<string, double> _stocks = new Dictionary<string, double>();
-    private readonly List<IStockObserver> _observers = new List<IStockObserver>();
+    private readonly List<IEmployeeObserver> _observers = new List<IEmployeeObserver>();
 
-    public void AddStock(string stockName, double price)
-    {
-        _stocks[stockName] = price;
-    }
-
-    public void Attach(IStockObserver observer)
+    public void Attach(IEmployeeObserver observer)
     {
         _observers.Add(observer);
     }
 
-    public void Detach(IStockObserver observer)
+    public void Detach(IEmployeeObserver observer)
     {
         _observers.Remove(observer);
     }
 
-    public void Notify(string stockName, double price)
+    public void Notify(string employeeName, string action, string details)
     {
         foreach (var observer in _observers)
         {
-            observer.Update(stockName, price);
+            observer.Update(employeeName, action, details);
         }
     }
 
-    public void ChangeStockPrice(string stockName, double newPrice)
+    public void HireEmployee(string employeeName)
     {
-        if (_stocks.ContainsKey(stockName))
-        {
-            _stocks[stockName] = newPrice;
-            Notify(stockName, newPrice);
-        }
-        else
-        {
-            Console.WriteLine($"Акция {stockName} не найдена на бирже.");
-        }
+        Notify(employeeName, "принят на работу", "Добро пожаловать в команду!");
+    }
+
+    public void PromoteEmployee(string employeeName, string newPosition)
+    {
+        Notify(employeeName, "повышен", $"Теперь должность: {newPosition}");
+    }
+
+    public void TerminateEmployee(string employeeName)
+    {
+        Notify(employeeName, "уволен", "Желаем удачи в будущем.");
     }
 }
 
@@ -70,23 +66,24 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Создание биржи
-        var stockMarket = new StockMarket();
+        // Создаем отдел кадров
+        var hrDepartment = new HumanResourcesDepartment();
 
-        // Добавление акций
-        stockMarket.AddStock("Apple", 150.0);
-        stockMarket.AddStock("Microsoft", 200.0);
-        stockMarket.AddStock("Google", 300.0);
+        // Создаем наблюдателей
+        var observer1 = new EmployeeObserver("Менеджер");
+        var observer2 = new EmployeeObserver("Директор");
 
-        // Создание наблюдателей (инвесторов)
-        var investor1 = new Investor("Иван");
-        var investor2 = new Investor("Петр");
+        // Подписываем наблюдателей на отдел кадров
+        hrDepartment.Attach(observer1);
+        hrDepartment.Attach(observer2);
 
-        // Подписываем инвесторов на акции
-        stockMarket.Attach(investor1);
-        stockMarket.Attach(investor2);
+        // Принять сотрудника на работу
+        hrDepartment.HireEmployee("Александр");
 
-        // Изменение цены на акцию
-        stockMarket.ChangeStockPrice("Apple", 160.0);
+        // Повысить сотрудника
+        hrDepartment.PromoteEmployee("Александр", "Менеджер по продажам");
+
+        // Уволить сотрудника
+        hrDepartment.TerminateEmployee("Александр");
     }
 }
